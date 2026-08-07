@@ -38,3 +38,4 @@ if api_key:
         st.write(st.session_state.analiz)
 else:
     st.warning("⚠️ Lütfen API anahtarını gir.")
+
