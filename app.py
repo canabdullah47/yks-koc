@@ -1,39 +1,29 @@
 import streamlit as st
 import google.generativeai as genai
 
-st.set_page_config(page_title="YKS Askeri Koç", page_icon="🎯", layout="wide")
+st.set_page_config(page_title="YKS Askeri Koç", page_icon="🎯")
 
 st.title("🎯 YKS Askeri Disiplin Koçu")
-st.markdown("---")
 
-api_key = st.text_input("Gemini API Anahtarını Gir (Sadece bir kez):", type="password")
+api_key = st.text_input("Gemini API Anahtarını Gir:", type="password")
 
 if api_key:
-    genai.configure(api_key=api_key)
-    model = genai.GenerativeModel('models/gemini-1.5-flash')
-    with st.sidebar:
-        st.header("📋 Günlük Rapor")
-        calisma_suresi = st.slider("Net Odaklanma Süresi (Saat)", 0, 16, 8)
-        ders = st.selectbox("Çalışılan Ders", ["TYT Matematik", "TYT Türkçe", "TYT Fen", "TYT Sosyal", "AYT", "Kamp/Genel"])
+    try:
+        genai.configure(api_key=api_key)
+        # Model adını en basit haliyle tanımlıyoruz
+        model = genai.GenerativeModel('gemini-1.5-flash')
+        
+        ders = st.selectbox("Ders", ["Matematik", "Türkçe", "Fen", "Sosyal"])
         konu = st.text_input("Konu")
-        performans = st.select_slider("Verim", options=["Kötü", "Orta", "İyi", "Kusursuz"])
-        zorluk = st.text_area("Takıldığın yerler/Bahaneler:")
+        verim = st.select_slider("Verim", ["Kötü", "Orta", "İyi", "Kusursuz"])
         
         if st.button("Raporu Gönder"):
-            prompt = f"""
-            Sen askeri disipline sahip, sert, profesyonel bir YKS koçusun. Hedef: İlk 10.000.
-            Bugünkü veriler: {ders} - {konu}, {calisma_suresi} saat, verim: {performans}.
-            Zorluklar: {zorluk}.
-            
-            GÖREV:
-            1. Askeri bir dille raporu değerlendir (başarıyı takdir et, rehaveti anında kes).
-            2. 14 Eylül'e kadar vaktin daraldığını hatırlatarak yarın için acımasız ve stratejik bir hedef belirle.
-            """
-            response = model.generate_content(prompt)
-            st.session_state.analiz = response.text
-
-    if 'analiz' in st.session_state:
-        st.subheader("📢 Koçun Emri")
-        st.write(st.session_state.analiz)
+            with st.spinner('Koç değerlendiriyor...'):
+                prompt = f"Sen sert bir YKS koçusun. {ders} dersinden {konu} çalıştım. Verimim: {verim}. Askeri bir dille kısa ve öz yorum yap."
+                response = model.generate_content(prompt)
+                st.write(response.text)
+    except Exception as e:
+        st.error(f"Bir hata oluştu: {e}")
 else:
-    st.warning("⚠️ Lütfen API anahtarını gir.")
+    st.info("Lütfen devam etmek için API anahtarınızı girin.")
+
