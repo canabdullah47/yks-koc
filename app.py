@@ -1,5 +1,13 @@
 import streamlit as st
-import google.generativeai as genai
+import subprocess
+import sys
+
+# Kütüphane sunucuda yoksa otomatik yükle
+try:
+    import google.generativeai as genai
+except ImportError:
+    subprocess.check_call([sys.executable, "-m", "pip", "install", "google-generativeai"])
+    import google.generativeai as genai
 
 st.set_page_config(page_title="YKS Askeri Koç", page_icon="🎯", layout="wide")
 
@@ -38,4 +46,5 @@ if api_key:
         st.write(st.session_state.analiz)
 else:
     st.warning("⚠️ Lütfen API anahtarını gir.")
+
 
