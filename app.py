@@ -11,7 +11,7 @@ if api_key:
     try:
         genai.configure(api_key=api_key)
         # Model adını en basit haliyle tanımlıyoruz
-        model = genai.GenerativeModel('gemini-1.5-flash')
+        model = genai.GenerativeModel('gemini-pro')
         
         ders = st.selectbox("Ders", ["Matematik", "Türkçe", "Fen", "Sosyal"])
         konu = st.text_input("Konu")
